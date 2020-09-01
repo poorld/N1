@@ -131,3 +131,7 @@ docker logs mysql 2>&1 | grep GENERATED
 ```
 docker exec -it mysql mysql -uroot -p
 ```
+
+
+
+![我的容器](my_container.png)
