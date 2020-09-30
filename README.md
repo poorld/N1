@@ -22,7 +22,52 @@ docker run -d -p 8082:80 --name docker-nginx \
 -v /mnts/download:/usr/share/nginx/download:ro \
 nginx
 ```
+> nginx.conf 的root要指向docker的目录，比如root /usr/share/nginx/html;
+nginx.conf示例（vue项目、下载列表）
+```
+server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
 
+        root /usr/share/nginx/html;
+
+        index index.html index.htm index.nginx-debian.html;
+
+        server_name _;
+        location / {
+                try_files $uri $uri/ @router;
+                index index.html;
+        }
+        location @router {
+                rewrite ^.*$ /index.html last;
+        }
+
+        location /download {
+            charset  utf-8;
+            #root /data/; #目录是/data/download/
+            alias /usr/share/nginx/download;
+
+            if ($request_filename ~* ^.*?\.(txt)$){
+            add_header Content-Disposition 'attachment';
+            add_header Content-Type: 'APPLICATION/OCTET-STREAM';}
+
+            autoindex on;
+            autoindex_exact_size   off;
+            autoindex_localtime    on;
+            #access_log  /var/log/nginx/download.log  main;
+        }
+
+        #error_page  404              /404.html;
+
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   html;
+        }
+
+    }
+```
 ## aria2NG
 --------------------------------------
 ```
